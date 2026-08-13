@@ -22,7 +22,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       const settings = await chrome.storage.local.get({
         apiKey: "",
-        model: "gemini-3-flash-preview"
+        model: "gemini-3.6-flash"
       });
 
       if (!settings.apiKey) {
@@ -45,14 +45,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       // Try the selected model first. If Google returns a temporary high-demand/
       // resource-exhausted response, automatically try the fallback model.
       const models = [settings.model];
+      if (!models.includes("gemini-3.6-flash")) models.push("gemini-3.6-flash");
       if (!models.includes("gemini-3-flash-preview")) models.push("gemini-3-flash-preview");
-      if (!models.includes("gemini-3.1-flash-lite")) models.push("gemini-3.1-flash-lite");
+      if (!models.includes("gemini-2.5-flash")) models.push("gemini-2.5-flash");
 
       let lastError = "";
 
       for (const model of models) {
+        const modelPath = model.startsWith("models/") ? model : `models/${model}`;
         const response = await fetch(
-          "https://generativelanguage.googleapis.com/v1beta/interactions",
+          `https://generativelanguage.googleapis.com/v1beta/${modelPath}:generateContent`,
           {
             method: "POST",
             headers: {
@@ -60,11 +62,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               "x-goog-api-key": settings.apiKey
             },
             body: JSON.stringify({
-              model,
-              input: [
-                { type: "text", text: prompt },
-                { type: "image", mime_type: "image/jpeg", data: base64 }
-              ]
+              contents: [{
+                role: "user",
+                parts: [
+                  { text: prompt },
+                  { inline_data: { mime_type: "image/jpeg", data: base64 } }
+                ]
+              }],
+              generationConfig: {
+                temperature: 0,
+                maxOutputTokens: 32
+              }
             })
           }
         );
@@ -83,25 +91,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           throw new Error(lastError);
         }
 
-        let answer = body?.output_text || "";
-
-        if (!answer && Array.isArray(body?.outputs)) {
-          answer = body.outputs
-            .flatMap(item => item?.content || [])
-            .filter(item => item?.type === "text")
-            .map(item => item.text || "")
-            .join("\n")
-            .trim();
-        }
-
-        if (!answer && Array.isArray(body?.steps)) {
-          answer = body.steps
-            .flatMap(step => step?.content || [])
-            .filter(item => item?.type === "text")
-            .map(item => item.text || "")
-            .join("\n")
-            .trim();
-        }
+        let answer = extractAnswerText(body);
 
         answer = cleanAnswer(answer);
 
@@ -144,4 +134,37 @@ function cleanAnswer(answer) {
     .replace(/^(answer|best answer|correct answer)\s*[:=-]\s*/i, "")
     .replace(/\s*(because|explanation|reason|rationale)\s*[:,-].*$/i, "")
     .trim();
+}
+
+function extractAnswerText(body) {
+  if (body?.text) return body.text;
+  if (body?.output_text) return body.output_text;
+
+  const candidates = Array.isArray(body?.candidates) ? body.candidates : [];
+  const candidateText = candidates
+    .flatMap(candidate => candidate?.content?.parts || [])
+    .map(part => part?.text || "")
+    .join("\n")
+    .trim();
+  if (candidateText) return candidateText;
+
+  if (Array.isArray(body?.outputs)) {
+    return body.outputs
+      .flatMap(item => item?.content || [])
+      .filter(item => item?.type === "text")
+      .map(item => item.text || "")
+      .join("\n")
+      .trim();
+  }
+
+  if (Array.isArray(body?.steps)) {
+    return body.steps
+      .flatMap(step => step?.content || [])
+      .filter(item => item?.type === "text")
+      .map(item => item.text || "")
+      .join("\n")
+      .trim();
+  }
+
+  return "";
 }

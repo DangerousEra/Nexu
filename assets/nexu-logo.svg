@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" role="img" aria-label="Nexu">
+  <defs>
+    <linearGradient id="nexuFill" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.42" stop-color="#7ee8ff"/>
+      <stop offset="1" stop-color="#8b5cff"/>
+    </linearGradient>
+    <linearGradient id="nexuStroke" x1="0" x2="1">
+      <stop offset="0" stop-color="#05d9ff"/>
+      <stop offset="1" stop-color="#8f44ff"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-40%" width="160%" height="190%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect x="11" y="18" width="498" height="124" rx="35" fill="#071128" stroke="url(#nexuStroke)" stroke-width="5"/>
+  <path d="M67 113V49h19l31 35V49h23v64h-19L90 78v35H67Zm93 0V49h65v19h-40v6h35v17h-35v6h42v16h-67Zm82 0 32-33-29-31h29l15 16 15-16h28l-29 31 32 33h-29l-18-19-18 19h-28Zm109 0V49h24v39c0 5 1 8 4 10 2 2 6 3 11 3s9-1 12-3c2-2 4-5 4-10V49h24v40c0 17-14 27-40 27s-39-10-39-27Z" fill="url(#nexuFill)" filter="url(#glow)"/>
+  <path d="M449 42l7 19 20 7-20 7-7 20-7-20-20-7 20-7 7-19Z" fill="#6ee7ff"/>
+  <path d="M470 88l4 10 10 4-10 4-4 10-4-10-10-4 10-4 4-10Z" fill="#9f7aea"/>
+</svg>

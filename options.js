@@ -3,7 +3,7 @@ const model = document.getElementById("model");
 const saved = document.getElementById("saved");
 
 chrome.storage.local.get(
-  { apiKey: "", model: "gemini-3-flash-preview" },
+  { apiKey: "", model: "gemini-3.6-flash" },
   data => {
     key.value = data.apiKey;
     model.value = data.model;
@@ -13,7 +13,7 @@ chrome.storage.local.get(
 document.getElementById("save").onclick = async () => {
   await chrome.storage.local.set({
     apiKey: key.value.trim(),
-    model: model.value.trim() || "gemini-3-flash-preview"
+    model: model.value.trim() || "gemini-3.6-flash"
   });
 
   saved.textContent = "Saved";

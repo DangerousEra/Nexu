@@ -1,19 +1,24 @@
-# Quiz Screen AI — Gemini v4
+# Nexu - Screen Sage
 
-The previous Gemini 3.1 Flash-Lite model returned a temporary high-demand error.
-This version defaults to `gemini-3-flash-preview` and automatically falls back
-between supported models when Google returns temporary 429/503/high-demand errors.
+Nexu is a Chrome extension that reads the visible screen with Gemini and shows only the final answer option.
 
-Install:
-1. Remove the previous Quiz Screen AI extension.
-2. Extract this ZIP.
-3. Open chrome://extensions.
-4. Enable Developer mode.
-5. Load unpacked and select this folder.
-6. Open Extension options.
-7. Paste your Gemini API key and Save.
-8. Open the quiz test website.
-9. Click AI -> Solve Screen.
+## What changed
 
-The extension does not click or submit answers.
+- Animated Nexu character inside the floating assistant UI.
+- Premium Nexu logo and branded Chrome icons.
+- Stable screen-capture permission using `<all_urls>` host access.
+- Gemini request updated to the current `generateContent` API shape.
+- Strict answer-only output with no explanation.
+
+## Install
+
+1. Open `chrome://extensions`.
+2. Enable Developer mode.
+3. Click Load unpacked.
+4. Select this folder.
+5. Open Nexu options.
+6. Paste your Gemini API key and save.
+7. Open a quiz page and click Nexu -> Solve Screen.
+
+Nexu does not click or submit answers.
 Do not paste your API key into chat.
